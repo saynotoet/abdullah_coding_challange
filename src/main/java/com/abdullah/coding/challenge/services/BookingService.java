@@ -29,10 +29,13 @@ public class BookingService {
 	@Autowired 
 	BookingRepository bookingRepository;
 	
-	public void bookRide(BookingRequest bookingRequest) {
+	public Booking bookRide(BookingRequest bookingRequest) {
 		boolean isCabAvailable=false;
 		Customer customer = customerRepository.getCustomerById(bookingRequest.getCustomerId());
 		
+		if(!customer.getStatus().equalsIgnoreCase("ACTIVE")) {
+			return null;
+		}
 		bookingRequest.setCustomerId(customer.getId());
 		
 		List<Cab> cabList=cabRepository.getByVehicleType(bookingRequest.getVehicalType());
@@ -45,8 +48,6 @@ public class BookingService {
 			}
 		}
 		
-		bookingRequest.setStatus(BookingStatus.REQUESTED.toString());
-		
 		Booking booking =new Booking();
 		
 		booking.setCab(cab);
@@ -55,12 +56,12 @@ public class BookingService {
 		booking.setVehicalType(cab.getVehicleType());
 		booking.setBookingCode(bookingRequest.getBookingCode());
 		booking.setCreationTime(new Timestamp(System.currentTimeMillis()));
-		
-		booking = bookingRepository.save(booking);
-		
+		booking.setRequestTime(bookingRequest.getRequestTime());
 		
 		
+		return bookingRepository.save(booking);
 		
 	}
 
+	
 }

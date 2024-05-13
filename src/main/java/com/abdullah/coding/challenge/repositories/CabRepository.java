@@ -9,4 +9,5 @@ import com.abdullah.coding.challenge.entities.Cab;
 public interface CabRepository extends JpaRepository<Cab, Integer> {
 
 		public List<Cab> getByVehicleType(String vehicleType);
+		public Cab save(Cab cab);
 }

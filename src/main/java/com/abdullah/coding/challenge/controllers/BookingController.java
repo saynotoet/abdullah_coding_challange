@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abdullah.coding.challenge.entities.Booking;
 import com.abdullah.coding.challenge.entities.BookingRequest;
+import com.abdullah.coding.challenge.enums.CabStatus;
 import com.abdullah.coding.challenge.services.BookingService;
+import com.abdullah.coding.challenge.services.CabService;
 
 @RestController
 @RequestMapping("booking")
@@ -16,10 +19,20 @@ public class BookingController {
 	
 	@Autowired
 	BookingService bookingService;
+	
+	@Autowired
+	CabService cabService;
 
 	@PostMapping("/bookRide")
 	public void bookRide(@RequestBody BookingRequest bookingRequest) {
-
-		bookingService.bookRide(bookingRequest);
+		
+		
+		 Booking booking = bookingService.bookRide(bookingRequest);
+		 if(booking != null) {
+			 booking.getCab().setStatus(CabStatus.NOT_AVAILABLE.toString());
+			cabService.updateCabStatus(booking.getCab()); 
+		 }
+			
+		
 	}
 }
